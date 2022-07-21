@@ -10,46 +10,54 @@
 
 import numpy as np
 import ROOT
+import os
 
-side = 4
-mod = 64
-cell = 8
-cells = 48
-pulse = 7
+sides = 4
+modules = 64
+cells_tmdb = 8
+cells_atlas = 48
+pulses = 7
 
-nFiles = 6
+nFiles = 40
 
-eventLim = False
-numEvts = 1000
+choose_events_num = False
+events_num = 1000
+
+user = "pbragali"
+run_number = "29676563"
+data_path = "data"
+output_path = "files/files_" + run_number
+
+os.system("mkdir " + output_path)
 
 # Leitura dos dados
 chain = ROOT.TChain("h2000","")
+
 for i in range(1, nFiles+1):
-  filename = "data/user.pbragali.29676563.AANT._" + f"{i:06}" + ".root"
+  filename = data_path + "/user." + user + "." + run_number + ".AANT._" + f"{i:06}" + ".root"
   chain.Add(filename+"/h2000")
 
-if eventLim:
-  if numEvts < chain.GetEntries():
-    nentries = numEvts
-  else:
-    nentries = chain.GetEntries()
-else:
-  nentries   = chain.GetEntries()
+nentries = chain.GetEntries()
 
-print("Total de eventos: ", nentries)
+if choose_events_num:
+  if events_num < chain.GetEntries():
+    nentries = events_num
 
 sampleTMDB = []
 eOpt = []
 
 for entryNum in range(0,nentries):
 
+  print("Processing event %d of %d..."%(entryNum+1, nentries))
   chain.GetEntry(entryNum)
 
   aux_sampleTMDB = getattr(chain,"sampleTMDB")
   aux_eOpt = getattr(chain,"eOpt")
 
-  sampleTMDB.append(np.array(aux_sampleTMDB).reshape(side, mod, cell, pulse))
-  eOpt.append(np.array(aux_eOpt).reshape(side, mod, cells))
+  sampleTMDB.append(np.array(aux_sampleTMDB).reshape(sides, modules, cells_tmdb, pulses))
+  eOpt.append(np.array(aux_eOpt).reshape(sides, modules, cells_atlas))
 
-np.save('sampleTMDB.npy', sampleTMDB)
-np.save('eOpt.npy', eOpt)
+print("Saving output files...")
+np.save(output_path + '/sampleTMDB' + '_' + run_number + '.npy', sampleTMDB)
+np.save(output_path + '/eOpt' + '_' + run_number + '.npy', eOpt)
+print("Done!")

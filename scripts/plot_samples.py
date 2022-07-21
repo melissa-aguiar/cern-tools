@@ -10,6 +10,7 @@
 
 import numpy as np
 import ROOT
+import os
 import matplotlib.pyplot as plt
 
 # Plot all events for each cell
@@ -19,22 +20,32 @@ side = {3:'EBA',2:'EBC'}
 channel_str = {0: 'D5L', 1:'D5R', 2:'D6L', 3:'D6R'}
 channel = {0: 17, 1:16, 2:37, 3:38}
 
+run_number = "29676563"
+input_path = "files/files_" + run_number
+output_path = "plots/plots_" + run_number
 
-sampleTMDB = np.load('sampleTMDB.npy')
-eOpt = np.load('eOpt.npy')
+choose_energy_limits = True
+limit_min = 2000
+limit_max = 5000
+
+os.system("mkdir " + output_path)
+
+sampleTMDB = np.load(input_path + '/sampleTMDB' + '_' + run_number + '.npy')
+eOpt = np.load(input_path + '/eOpt' + '_' + run_number + '.npy')
 
 nentries = np.size(sampleTMDB, 0)
 
 for sd in side:
   for md in mod:
     for ch in channel:
+      print("Processing " + side.get(sd) + f"{md:02}" + "-" + channel_str.get(ch) + "...")
       for evt in range(0, nentries):
-        if (eOpt[evt, sd, md, channel.get(ch)] > 2000) and (eOpt[evt, sd, md, channel.get(ch)] < 5000):
-          print(side.get(sd) + f"{md:02}" + "-" + channel_str.get(ch))
-          print("Evento %d de %d..."%(evt+1, nentries))
+        if choose_energy_limits:
+          if (eOpt[evt, sd, md, channel.get(ch)] > limit_min) and (eOpt[evt, sd, md, channel.get(ch)] < limit_max):
+            plt.plot(sampleTMDB[evt, sd, md, ch,:])
+        else:
           plt.plot(sampleTMDB[evt, sd, md, ch,:])
       plt.title(side.get(sd) + f"{md:02}" + "-" + channel_str.get(ch))
-      plt.savefig("plots/" + side.get(sd) + f"{md:02}" + channel_str.get(ch) + ".png")
+      plt.savefig(output_path + "/" + side.get(sd) + f"{md:02}" + channel_str.get(ch) + ".png")
       plt.close()
 
-## corte de energia limite inferior e superior
