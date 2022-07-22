@@ -17,12 +17,11 @@ import matplotlib.pyplot as plt
 
 mod = range(0, 64)
 side = {3:'EBA',2:'EBC'}
-channel_str = {0: 'D5L', 1:'D5R', 2:'D6L', 3:'D6R'}
-channel = {0: 17, 1:16, 2:37, 3:38}
+channel = {0: 'D5L', 1:'D5R', 2:'D6L', 3:'D6R'}
 
 run_number = "29676563"
 input_path = "files/files_" + run_number
-output_path = "plots/plots_" + run_number
+output_path = "plots/samples_" + run_number
 
 choose_energy_limits = True
 limit_min = 2000
@@ -31,21 +30,26 @@ limit_max = 5000
 os.system("mkdir " + output_path)
 
 sampleTMDB = np.load(input_path + '/sampleTMDB' + '_' + run_number + '.npy')
-eOpt = np.load(input_path + '/eOpt' + '_' + run_number + '.npy')
+eOpt = np.load(input_path + '/eOptTMDB' + '_' + run_number + '.npy')
 
 nentries = np.size(sampleTMDB, 0)
 
 for sd in side:
   for md in mod:
     for ch in channel:
-      print("Processing " + side.get(sd) + f"{md:02}" + "-" + channel_str.get(ch) + "...")
+      print("Processing " + side.get(sd) + f"{md+1:02}" + "-" + channel.get(ch) + "...")
+      cnt = 1
       for evt in range(0, nentries):
         if choose_energy_limits:
-          if (eOpt[evt, sd, md, channel.get(ch)] > limit_min) and (eOpt[evt, sd, md, channel.get(ch)] < limit_max):
-            plt.plot(sampleTMDB[evt, sd, md, ch,:])
+          if (eOpt[evt, sd, md, ch] > limit_min) and (eOpt[evt, sd, md, ch] < limit_max):
+            plt.plot(range(1, 8), sampleTMDB[evt, sd, md, ch,:])
+            cnt = cnt + 1
         else:
           plt.plot(sampleTMDB[evt, sd, md, ch,:])
-      plt.title(side.get(sd) + f"{md:02}" + "-" + channel_str.get(ch))
-      plt.savefig(output_path + "/" + side.get(sd) + f"{md:02}" + channel_str.get(ch) + ".png")
+          cnt = nentries
+      plt.title(side.get(sd) + f"{md+1:02}" + "-" + channel.get(ch) + " | Number of Events: " + str(cnt))
+      plt.xlabel("Sample")
+      plt.ylabel("Amplitude [ADC]")
+      plt.savefig(output_path + "/" + side.get(sd) + f"{md+1:02}" + channel.get(ch) + ".png")
       plt.close()
 
