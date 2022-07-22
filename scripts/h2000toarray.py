@@ -20,14 +20,14 @@ cells_atlas = 48
 cells_energy = 4
 pulses = 7
 
+channel = {0: 17, 1: 16, 2: 37, 3: 38}
+sideTMDB = {3:'EBA',2:'EBC'}
+
 nFiles = 40
 
-choose_energy_limits = False
-limit_min = 2000
-limit_max = 5000
-
 choose_events_num = True
-events_num = 150000
+events_num = 50000
+packets = 5
 
 user = "pbragali"
 run_number = "29676563"
@@ -37,7 +37,6 @@ output_path = "files/files_" + run_number
 os.system("mkdir files")
 os.system("mkdir " + output_path)
 
-# Leitura dos dados
 chain = ROOT.TChain("h2000","")
 
 for i in range(1, nFiles+1):
@@ -49,43 +48,51 @@ nentries = chain.GetEntries()
 if choose_events_num:
   if events_num < chain.GetEntries():
     nentries = events_num
+  else:
+    print("Error!")
+    print("Number of events selected > Total events")
+    exit()
 
-sampleTMDB = []
-eOpt = []
-eOptTMDB = np.zeros((nentries, sides, modules, cells_energy))
-muonTMDB = np.zeros((nentries, sides, modules, cells_energy, pulses))
+  for pack in range(0, packets):
+    sampleTMDB = []
+    eOpt = []
+    eOptTMDB = np.zeros((nentries, sides, modules, cells_energy))
+    desc_str = "Processing events" + "[" + str(pack+1) + "/" + str(packets) + "]"
+    for evt in tqdm(range(0,nentries), desc=desc_str):
+      chain.GetEntry(events_num*pack + evt)
+      aux_sampleTMDB = getattr(chain,"sampleTMDB")
+      aux_eOpt = getattr(chain,"eOpt")
+      sampleTMDB.append(np.array(aux_sampleTMDB).reshape(sides, modules, cells_tmdb, pulses))
+      eOpt.append(np.array(aux_eOpt).reshape(sides, modules, cells_atlas))
 
-for evt in tqdm(range(0,nentries), desc="Processing events"):
-  chain.GetEntry(evt)
+      for sd in sideTMDB:
+        for md in range(0, modules):
+          for ch in channel:
+            eOptTMDB[evt][sd][md][ch] = np.array(eOpt[evt][sd][md][channel.get(ch)])
 
-  aux_sampleTMDB = getattr(chain,"sampleTMDB")
-  aux_eOpt = getattr(chain,"eOpt")
+    print("Saving output files...")
+    np.save(output_path + '/sampleTMDB' + '_' + run_number + '_' + str(pack) + '.npy', sampleTMDB)
+    np.save(output_path + '/eOptTMDB' + '_' + run_number + '_' + str(pack) + '.npy', eOptTMDB)
+    print("Done!")
 
-  sampleTMDB.append(np.array(aux_sampleTMDB).reshape(sides, modules, cells_tmdb, pulses))
-  eOpt.append(np.array(aux_eOpt).reshape(sides, modules, cells_atlas))
-
-  for sd in range(0, sides):
-    for md in range(0, modules):
-      eOptTMDB[evt][sd][md][0] = np.array(eOpt[evt][sd][md][17])
-      eOptTMDB[evt][sd][md][1] = np.array(eOpt[evt][sd][md][16])
-      eOptTMDB[evt][sd][md][2] = np.array(eOpt[evt][sd][md][37])
-      eOptTMDB[evt][sd][md][3] = np.array(eOpt[evt][sd][md][38])
-
-if choose_energy_limits:
-  for evt in tqdm(range(0, nentries), desc="Selecting samples"):
-    for sd in range(0, sides):
-      for md in range(0, modules):
-        for ch in range(0, cells_energy):
-          if (eOptTMDB[evt][sd][md][ch] > limit_min) and (eOptTMDB[evt, sd, md, ch] < limit_max):
-            muonTMDB[evt][sd][md][ch][:] = np.array(sampleTMDB[evt][sd][md][ch][:])
-  print("Saving output files...")
-  np.save(output_path + '/muonTMDB' + '_' + run_number + '.npy', muonTMDB)
-  print("Done!")
 else:
+  sampleTMDB = []
+  eOpt = []
+  eOptTMDB = np.zeros((nentries, sides, modules, cells_energy))
+
+  for evt in tqdm(range(0,nentries), desc="Processing events"):
+    chain.GetEntry(evt)
+    aux_sampleTMDB = getattr(chain,"sampleTMDB")
+    aux_eOpt = getattr(chain,"eOpt")
+    sampleTMDB.append(np.array(aux_sampleTMDB).reshape(sides, modules, cells_tmdb, pulses))
+    eOpt.append(np.array(aux_eOpt).reshape(sides, modules, cells_atlas))
+
+    for sd in sideTMDB:
+      for md in range(0, modules):
+        for ch in channel:
+          eOptTMDB[evt][sd][md][ch] = np.array(eOpt[evt][sd][md][channel.get(ch)])
+
   print("Saving output files...")
   np.save(output_path + '/sampleTMDB' + '_' + run_number + '.npy', sampleTMDB)
   np.save(output_path + '/eOptTMDB' + '_' + run_number + '.npy', eOptTMDB)
   print("Done!")
-
-
-
