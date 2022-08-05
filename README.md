@@ -9,7 +9,7 @@ Setup ATLAS environment:
 
     setupATLAS
 
-Start using CERN's Grid [*]:
+Setup CERN's Grid [*]:
 
     voms-proxy-init -voms atlas
 
