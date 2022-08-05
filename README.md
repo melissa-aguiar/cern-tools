@@ -53,11 +53,11 @@ List files for run 427892:
 
     rucio list-dids data22_13p6TeV:data22_13p6TeV*427892*.RAW
 
-List files for Physics Main run 427892:
+List files for Physics Main data from run 427892:
 
     rucio list-files data22_13p6TeV.00427892.physics_Main.daq.RAW
 
-Use CERN's Grid to download files for Physics Main run 427892:
+Use CERN's Grid to download Physics Main data from run 427892:
 
     source panda.sh data22_13p6TeV.00427892.physics_Main.daq.RAW
 
