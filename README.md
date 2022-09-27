@@ -26,9 +26,11 @@ Setup Panda:
     lsetup panda
 
 
-[*] To get acess to CERN's Grid, get a digital certificate and join ATLAS Virtual Organization following the tutorial:
+[*] To get acess to CERN's Grid, get a digital certificate and join ATLAS Virtual Organization following the links:
 
     https://twiki.cern.ch/twiki/bin/viewauth/AtlasComputing/WorkBookStartingGrid
+
+    https://atlassoftwaredocs.web.cern.ch/ASWTutorial/basicSetup/grid_vo/
 
 ## Instructions to Get Run Data
 
