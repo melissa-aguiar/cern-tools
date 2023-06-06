@@ -67,7 +67,11 @@ Use CERN's Grid to download Physics Main data from run 427892:
 
     source panda.sh data22_13p6TeV.00427892.physics_Main.daq.RAW
 
-If the task is running, in file job.tmp we will have a TaskID and it can be monitored in BigPanda:
+If the task is running, we will have a TaskID and a SUCCESS message in the file job.tmp:
+
+    cat job.tmp
+
+The task can be monitored in BigPanda:
 
     https://bigpanda.cern.ch/user/
 
