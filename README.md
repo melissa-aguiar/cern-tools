@@ -13,13 +13,17 @@ Setup CERN's Grid [*]:
 
     voms-proxy-init -voms atlas
 
-Configure Athena:
+Configure Athena v23:
 
-    asetup Athena,22.0.1
+    asetup Athena,23.0.0
 
 Setup Rucio:
 
     lsetup rucio
+
+Configure Athena v22:
+
+    asetup Athena,22.0.0
 
 Setup Panda:
 
