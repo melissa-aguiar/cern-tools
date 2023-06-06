@@ -1,31 +1,35 @@
+#RUN2=True
+RUN3=True
+UDP4=True
+#CondDbTag = 'CONDBR2-BLKPA-RUN2-09'
+RunNumber=0
+FileName='data23_900GeV.RAW.data'
+#FileName='/eos/atlas/atlastier0/rucio/data22_13p6TeV/physics_Main/00431371/data22_13p6TeV.00431371.physics_Main.daq.RAW/data22_13p6TeV.00431371.physics_Main.daq.RAW._lb0221._SFO-12._0001.data'
+OutputDirectory='.'
 
-from RecExConfig.RecFlags import rec
+#from RecExConfig.RecFlags import rec 
+#rec.doLArg = True
+#includeLAr = True
 
-RunNumber       = 0
-RUN2            = False
-RUN3            = True
-UDP4            = True
-useTMDB         = True
-doTileNtuple    = True
-doTileOpt2      = True
-doTileOpt1      = False
-rec.doLArg      = False
-includeLAr      = False
-doCaloNtuple    = False
-doTileMon       = False
-doTileCalib     = False
-doTileOptATLAS  = False
-doTileFit       = False
-doAtlantis      = False
-TileUseDCS      = False
-useRODReco      = False
+doTileNtuple=True
 
-FileName        = '/eos/atlas/atlastier0/rucio/data22_13p6TeV/physics_Main/00427394/data22_13p6TeV.00427394.physics_Main.daq.RAW/data22_13p6TeV.00427394.physics_Main.daq.RAW._lb0221._SFO-12._0001.data'
-OutputDirectory = '.'
-#CondDbTag      = 'CONDBR2-BLKPA-RUN2-09'
+doCaloNtuple=False
+doTileMon=False
+doTileCalib=False
+
+doTileOpt2=True
+doTileOpt1=False
+doTileOptATLAS=False
+doTileFit=False
+doAtlantis=False
+TileUseDCS=False
+
+useRODReco=False
+useTMDB=True
 
 include("TileRecEx/jobOptions_TileCalibRec.py")
 
-topSequence.TileNtuple.BSInput         = False
-svcMgr.EventSelector.Input             = []
+topSequence.TileNtuple.BSInput = False
+
+svcMgr.EventSelector.Input = []
 svcMgr.ByteStreamInputSvc.FullFileName = [ FileName ]
