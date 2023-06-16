@@ -29,7 +29,4 @@ useTMDB=True
 
 include("TileRecEx/jobOptions_TileCalibRec.py")
 
-topSequence.TileNtuple.BSInput = False
-
-svcMgr.EventSelector.Input = []
-svcMgr.ByteStreamInputSvc.FullFileName = [ FileName ]
+topSequence.TileNtuple.BSInput = True
