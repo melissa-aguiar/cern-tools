@@ -15,15 +15,11 @@ Setup CERN's Grid [*]:
 
 Configure Athena v23:
 
-    asetup Athena,23.0.0
+    asetup Athena,23.0.31
 
 Setup Rucio:
 
     lsetup rucio
-
-Configure Athena v22:
-
-    asetup Athena,22.0.0
 
 Setup Panda:
 
